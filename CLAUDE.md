@@ -6,9 +6,10 @@ Guidance for AI coding assistants working in this repo. Read SPEC.md first; it i
 Apology Helper: a one-page web app. The user writes an apology; a rule-based checker flags phrases that often backfire, phrased as dismissable questions. Built as a 1-hour internship assignment, so scope discipline matters more than polish.
 
 ## Stack
-- Plain HTML, CSS, and vanilla JavaScript (ES modules). No framework, no build step.
-- Files: `index.html`, `styles.css`, `app.js` (UI), `checker.js` (rules + `check(text)`), `checker.test.js` (optional, runs the SPEC test cases with `node`).
-- Deploy as a static site (GitHub Pages or Netlify).
+- Vite + React 18 + TypeScript. No other runtime dependencies (no UI libs, no state libs, no router).
+- Layout: `src/checker/` (pure TS: types, rules, check, hints, tests), `src/components/` (+ `overlays/`), `src/hooks/`, `src/data/templates.ts`, `src/styles/index.css`.
+- Tests: vitest (`npm test`) runs the SPEC test cases in `src/checker/checker.test.ts`.
+- Dev: `npm run dev`. Deploy the `dist/` output as a static site (GitHub Pages or Netlify).
 
 ## Hard rules
 - **No AI in the product.** The app never generates, rewrites, or suggests apology text. All flags come from the rules in `checker.js`.
@@ -32,7 +33,7 @@ Apology Helper: a one-page web app. The user writes an apology; a rule-based che
 
 ## Testing
 - The 10 test cases in SPEC.md are the acceptance tests. If a rule change breaks one, fix the rule, not the test, unless the test is wrong.
-- Run with `node checker.test.js` (simple asserts, no test framework).
+- Run with `npm test`.
 
 ## Out of scope (don't add even if it seems helpful)
 AI rewrites, sentiment analysis, saving drafts, sharing links, accounts, multiple languages, themes, analytics.

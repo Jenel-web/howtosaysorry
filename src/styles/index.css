@@ -1,0 +1,84 @@
+/* ===== Design tokens: edit these to restyle the app. Rules below only use var(--…). ===== */
+:root {
+  /* color: surfaces & text */
+  --bg: #f6f4ef;
+  --surface: #fff;
+  --text: #1f2430;
+  --text-muted: #5b6070;
+  --border: #c9c5b8;
+  --backdrop: rgba(20, 22, 30, .5);
+
+  /* color: actions */
+  --primary: #2f5fd0;
+  --on-primary: #fff;
+  --selected-bg: #e3ecff;
+  --selected-border: #6b8cde;
+
+  /* color: feedback */
+  --strong: #d0452f;
+  --weak: #d6b43a;
+  --counter-bg: #fff2e0;
+  --counter-border: #e0a85a;
+  --hint-text: #7a5a14;
+  --notice-bg: #fdeceb;
+
+  /* type */
+  --font: system-ui, sans-serif;
+  --text-sm: .9rem;
+  --text-md: 1rem;
+  --text-lg: 1.2rem;
+  --text-xl: 1.6rem;
+  --text-input: 16px; /* keep >= 16px: smaller makes iOS zoom the page */
+
+  /* shape & spacing */
+  --radius: 10px;
+  --radius-lg: 14px;
+  --gap-sm: 6px;
+  --gap: 10px;
+  --gap-lg: 14px;
+  --page-width: 640px;
+  --tap: 44px; /* keep >= 44px: minimum tap target */
+
+  font-family: var(--font);
+  color: var(--text);
+  background: var(--bg);
+}
+
+/* ===== Base ===== */
+* { box-sizing: border-box; }
+body { margin: 0; }
+main { max-width: var(--page-width); margin: 0 auto; padding: 20px 16px 40px; display: flex; flex-direction: column; gap: var(--gap-lg); }
+h1 { margin: 0 0 4px; font-size: var(--text-xl); }
+header p, footer p { margin: 0; color: var(--text-muted); font-size: var(--text-sm); }
+footer { margin-top: 12px; display: grid; gap: 4px; }
+
+/* ===== Controls ===== */
+textarea { width: 100%; font: inherit; font-size: var(--text-input); padding: 12px; border: 1px solid var(--border); border-radius: var(--radius); resize: vertical; background: var(--surface); color: inherit; }
+button { min-height: var(--tap); padding: 0 16px; font: inherit; color: inherit; border: 1px solid var(--border); border-radius: var(--radius); background: var(--surface); cursor: pointer; }
+button[aria-pressed="true"] { background: var(--selected-bg); border-color: var(--selected-border); }
+button.primary { background: var(--primary); color: var(--on-primary); border-color: var(--primary); }
+button:disabled { opacity: .45; cursor: not-allowed; }
+.row { display: flex; gap: var(--gap); flex-wrap: wrap; }
+
+/* ===== Flags & hints ===== */
+.counter { align-self: flex-start; background: var(--counter-bg); border-color: var(--counter-border); }
+.hints { margin: 0; padding-left: 18px; color: var(--hint-text); }
+.flags { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--gap); }
+.card { background: var(--surface); border-radius: var(--radius); padding: 12px; border-left: 4px solid; }
+.card.strong { border-color: var(--strong); }
+.card.weak { border-color: var(--weak); }
+.card.dismissed { opacity: .6; }
+.card q { font-weight: 600; }
+.card p { margin: var(--gap-sm) 0 var(--gap); }
+
+/* ===== Overlays ===== */
+.backdrop { position: fixed; inset: 0; background: var(--backdrop); display: grid; place-items: center; padding: 16px; }
+.dialog { position: relative; background: var(--surface); border-radius: var(--radius-lg); padding: 22px 18px 18px; width: min(100%, 440px); display: grid; gap: 12px; }
+.dialog h2 { margin: 0; font-size: var(--text-lg); padding-right: 40px; }
+.dialog p { margin: 0; }
+.x { position: absolute; top: 6px; right: 6px; width: var(--tap); padding: 0; border: 0; font-size: var(--text-xl); }
+.check { display: flex; gap: var(--gap); align-items: center; min-height: var(--tap); }
+.check input { width: 22px; height: 22px; }
+.notice { background: var(--notice-bg); padding: var(--gap); border-radius: var(--radius); display: grid; gap: 8px; }
+.template { background: var(--bg); padding: var(--gap); border-radius: var(--radius); display: grid; gap: 8px; }
+.sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
