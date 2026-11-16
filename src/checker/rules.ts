@@ -6,17 +6,21 @@ import type { Rule } from './types'
 
 // "sorry, but I can't make it" is a polite refusal, not an excuse.
 // "I'm sorry. But I'd like to explain when you're ready" is an invitation.
-const NOT_AN_EXCUSE =
+export const NOT_AN_EXCUSE =
   /^\s*(?:i\s+)?(?:can['’]?t\s+(?:make|come|attend|join|go|stay|meet|help)|cannot\s+(?:make|come|attend|join)|won['’]t\s+(?:be\s+able|make)|(?:have|need)\s+to\s+(?:cancel|go|leave|run|decline|reschedule|skip|bail|miss)|am\s+(?:not\s+able|unable)|i['’]m\s+(?:not\s+able|unable)|i['’]d\s+(?:like|love)\s+to\s+(?:talk|explain|hear|listen|share)|can\s+we|could\s+we|may\s+i|let['’]s\s+(?:reschedule|talk|meet|try|catch|figure|discuss|find|plan))\b/i
 
 // "I'm not saying you're overreacting" disclaims the word.
-const NEGATED = /\b(?:not|n['’]t|never)\s+(?:saying|say|calling|implying|think(?:ing)?|suggesting)\b[^.!?]*$/i
+export const NEGATED =/\b(?:not|n['’]t|never)\s+(?:saying|say|calling|implying|think(?:ing)?|suggesting)\b[^.!?]*$/i
 
 // "sorry you're going through this" is sympathy, not an apology.
-const SYMPATHY =
+export const SYMPATHY =
   /^\s*(?:going\s+through|dealing\s+with|sick|ill|injured|in\s+pain|struggling|stuck|laid\s+off|fired|been\s+through|had\s+to\s+(?:go|deal|see|hear|witness)|having\s+(?:a\s+)?(?:hard|tough|rough|bad))/i
 
-const SOUNDS_LIKE_THEIR_REACTION = 'This can sound like the problem is their reaction. Can you name what you did?'
+// "you always matter to me" is warm, not a criticism.
+export const KIND_CONTINUATION =
+  /^\s*(?:(?:always\s+)?(?:matter|deserve|mean\s+(?:so\s+much|a\s+lot|the\s+world)|have\s+(?:a\s+right|my\s+support))|are\s+(?:always\s+)?(?:welcome|loved|important|enough|valued)|can\s+(?:always\s+)?(?:talk|call|come|count))/i
+
+export const SOUNDS_LIKE_THEIR_REACTION = 'This can sound like the problem is their reaction. Can you name what you did?'
 
 // Words for "I apologize" that people use before an excuse.
 const SORRY_WORDS = 'sorry|apologi[sz]e|apologi[sz]ing|my\\s+apologies|forgive\\s+me|regret|my\\s+bad|my\\s+fault|i\\s+was\\s+wrong|i\\s+messed\\s+up'
@@ -54,19 +58,6 @@ export const rules: Rule[] = [
     question: 'This may put the problem in how they heard it. Can you name what you said or did?',
   },
   {
-    id: 'other_state',
-    strength: 'strong',
-    pattern:
-      /\b(?:sorry|apologi[sz]e|regret)\s+(?:that\s+)?you(?:['’]re|\s+are|\s+were|\s+got|\s+have\s+been)\s+(?:(?:so|really|very)\s+)?(?:(?:feeling|being|acting)\s+)?(?:(?:so|really|very)\s+)?(?:upset|angry|mad|hurt|offended|bothered|sensitive|annoyed|insulted|triggered|emotional|dramatic|touchy|defensive|irritated|furious|disappointed|uncomfortable)\b(?!\s+by\b)/gi,
-    question: SOUNDS_LIKE_THEIR_REACTION,
-  },
-  {
-    id: 'sorry_hurt_by',
-    strength: 'weak',
-    pattern: /\b(?:sorry|apologi[sz]e|regret)\s+(?:that\s+)?you(?:['’]re|\s+are|\s+were)\s+(?:hurt|bothered|upset|offended|insulted|angry)\s+by\b/gi,
-    question: 'This puts their reaction first. Can you name your own words or action?',
-  },
-  {
     id: 'blame_shift',
     strength: 'strong',
     pattern:
@@ -87,6 +78,7 @@ export const rules: Rule[] = [
     pattern:
       /\byou(?:['’]re|\s+are)?\s+(?:always|never|constantly|forever|continually|perpetually)\b|\byou\s+(?:keep|kept)\s+(?:on\s+)?\w+ing\b|\bevery\s+(?:single\s+)?time\s+you\b|\byou\s+can\s+never\b|\byou\s+(?:just\s+)?(?:don['’]t|do\s+not)\s+ever\b|\bnot\s+once\s+have\s+you\b/gi,
     question: '"Always" and "never" can start a new argument. Is this about this one time?',
+    skipAfter: KIND_CONTINUATION,
   },
 
   // ---------- Red: cancelling the apology or dodging the actor ----------

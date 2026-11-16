@@ -32,8 +32,8 @@ const ids = (t: string) => check(t).map((f) => f.ruleId)
 describe('extended rules fire', () => {
   const cases: [string, string][] = [
     ['sorry you took it that way', 'took_it_that_way'],
-    ["I'm sorry you're so upset", 'other_state'],
-    ["I'm sorry you're bothered by what I said", 'sorry_hurt_by'], // "you were/are" is already red via sorry_you_feel
+    ["I'm sorry you're so upset", 'sorry_you_feel'],
+    ["I'm sorry you're bothered by what I said", 'sorry_you_feel'],
     ["I'm sorry if you were hurt", 'if_i_hurt'],
     ['Mistakes were made.', 'agentless'],
     ['Sorry not sorry.', 'sorry_not_sorry'],
@@ -74,8 +74,8 @@ describe('synonyms and variants fire', () => {
     ["I apologize that you're feeling this way.", 'sorry_you_feel'],
     ["I regret that you felt that way", 'sorry_you_feel'],
     ['Sorry to hear you feel that way', 'sorry_you_feel'],
-    ["I'm sorry you got upset", 'other_state'],
-    ["I'm sorry you're feeling so offended", 'other_state'],
+    ["I'm sorry you got upset", 'sorry_you_feel'],
+    ["I'm sorry you're feeling so offended", 'sorry_you_feel'],
     // conditional if
     ['I apologize if my words offended you.', 'if_i_hurt'],
     ['Sorry if what I said upset you.', 'if_i_hurt'],
@@ -195,6 +195,7 @@ describe('suppression (no flag)', () => {
     ['self absolute', 'I never meant to hurt you. I will always be here.'],
     ['refusal then plan', "Sorry, I can't make it tonight, but let's reschedule."],
     ['honest difficulty', 'This is hard for me to say. I am sorry I lied to you.'],
+    ['warm always', "You always matter to me, and you can always call me."],
     ['not your fault', "It's not your fault. It wasn't your fault at all."],
     ['never forget', "I'll never forget it, and I won't forget about it."],
     ['hindsight but-less', 'I hurt you and I own that.'],
@@ -202,7 +203,110 @@ describe('suppression (no flag)', () => {
   it.each(clean)('%s', (_n, text) => expect(check(text)).toEqual([]))
 
   it('a real excuse still flags', () => expect(ids("I'm sorry, but I was stressed.")).toContain('sorry_but'))
-  it('one card per phrase', () => expect(ids("I'm sorry you are upset")).toEqual(['other_state']))
+  it('one card per phrase', () => expect(ids("I'm sorry you are upset")).toEqual(['sorry_you_feel']))
+})
+
+describe('key words near each other, any order', () => {
+  const keyWords: [string, string][] = [
+    // the cases that were missed
+    ["it's your fault", 'blame_shift'],
+    ["It is really all your fault.", 'blame_shift'],
+    ['The blame is on you.', 'blame_shift'],
+    ["it's not my fault", 'denial'],
+    ["It really wasn't my fault.", 'denial'],
+    ["I'm not to blame for any of this.", 'denial'],
+    ['I am not responsible for what happened.', 'denial'],
+    ['you really push my buttons', 'blame_shift'],
+    ['You really pushed all of my buttons.', 'blame_shift'],
+    ['My buttons keep getting pressed by you.', 'blame_shift'],
+    ['It gets on my nerves when you do that.', 'blame_shift'],
+    ['You drive me completely crazy.', 'blame_shift'],
+    ['You asked for it.', 'blame_shift'],
+    ['You are the reason I snapped.', 'blame_shift'],
+    ['I only did it because of you.', 'blame_shift'],
+    ['If you had just listened, none of this would have happened.', 'blame_shift'],
+    // minimizing, any order
+    ['Honestly it was only a joke.', 'minimizing'],
+    ['I was kidding.', 'minimizing'],
+    ["It's not that big of a deal.", 'minimizing'],
+    ['You need to just relax.', 'minimizing'],
+    ["You should get over it.", 'minimizing'],
+    ["Don't take it so seriously.", 'minimizing'],
+    // other
+    ['A mistake was made.', 'agentless'],
+    ['Errors have been made on my side.', 'agentless'],
+    ['I said sorry already.', 'forgiveness_demand'],
+    ['What do you want from me?', 'forgiveness_demand'],
+    ['I apologize to anyone who might have been hurt.', 'generic_audience'],
+    ["That didn't happen.", 'relitigating'],
+    ['I never said that.', 'relitigating'],
+    ['Are we okay after this?', 'pressure'],
+  ]
+  it.each(keyWords)('%s -> %s', (text, id) => expect(ids(text)).toContain(id))
+
+  it("kind or ownership wording near the same key words is not flagged", () => {
+    expect(check("It's not your fault.")).toEqual([])
+    expect(check("It was my fault, and I'm sorry.")).toEqual([])
+    expect(check('I made a mistake and I am sorry.')).toEqual([])
+    expect(check("I'm sorry I pushed your buttons earlier.").map((f) => f.ruleId)).toContain('blame_shift') // false alarm is OK
+    expect(check('I need to get over this and learn from it.')).toEqual([])
+  })
+})
+
+describe('word-distance rules: same idea, different words', () => {
+  const flexible: [string, string][] = [
+    // sorry ... you ... reaction, with filler words in between
+    ['I am truly sorry that you ended up feeling hurt.', 'sorry_you_feel'],
+    ['I apologise that it seems you were quite offended.', 'sorry_you_feel'],
+    ['Sorry you seem really upset about it.', 'sorry_you_feel'],
+    // if ... harm, in any phrasing
+    ['Apologies if what I did was somehow hurtful.', 'if_i_hurt'],
+    ['If my tone came across as insulting, I regret that.', 'if_i_hurt'],
+    ['I apologize in case this upsets you, if it is wrong.', 'if_i_hurt'],
+    // you ... took ... wrong way
+    ['Sorry you read it all the wrong way.', 'took_it_that_way'],
+    ['I regret that my message was somehow misconstrued.', 'took_it_that_way'],
+    // blame
+    ['You really did make me feel awful, so it is on you.', 'blame_shift'],
+    ['It is honestly all your own fault.', 'blame_shift'],
+    ['You pretty much forced me to do it.', 'blame_shift'],
+    // minimizing
+    ['You really are so very sensitive.', 'minimizing'],
+    ['This was not really that big of a deal.', 'minimizing'],
+    ["You're honestly just being dramatic.", 'minimizing'],
+    ['I was only kind of joking around.', 'minimizing'],
+    // generalizations
+    ['You pretty much never listen to me.', 'always_never'],
+    ['You are, like, constantly late.', 'always_never'],
+    // demand
+    ['How many more times am I supposed to say sorry?', 'forgiveness_demand'],
+    ['I already told you, I said sorry twice.', 'forgiveness_demand'],
+    ['Stop acting so petty about it.', 'forgiveness_demand'],
+    ['What else can I possibly do?', 'forgiveness_demand'],
+    // weak ones
+    ['That is totally not what actually happened.', 'relitigating'],
+    ['I was really just trying my best to help.', 'intent_over_impact'],
+    ['I guess maybe I am sorry about it.', 'hedging'],
+    ['I am somewhat sorry about it.', 'hedging'],
+    ['Because my phone died, I never called.', 'unprompted_explanation'],
+    ['You really should understand my side.', 'unprompted_explanation'],
+    ['You definitely should say sorry as well.', 'reciprocity'],
+    ["I'll say sorry once you do.", 'reciprocity'],
+    ['Let us just move on from this.', 'move_on'],
+    ['Can we please just forget about all of this?', 'move_on'],
+    ["I'm such a total failure.", 'self_pity'],
+    ['I will definitely try to be a much better person.', 'no_specifics_promise'],
+    ['I promise I will never ever hurt you again.', 'absolute_promise'],
+    ["I'm sorry, really sorry, truly.", 'repeated_sorry'],
+    ['I am sorry for absolutely everything.', 'vague_apology'],
+  ]
+  it.each(flexible)('%s -> %s', (text, id) => expect(ids(text)).toContain(id))
+
+  it('a good apology that shares the same words stays clean', () => {
+    expect(check("I'm sorry I hurt you. I know you were upset, and I was wrong to say it.")).toEqual([])
+    expect(check("I know you're hurt, and I'm sorry I made you feel that way.")).toEqual([])
+    expect(check("I'm sorry. You didn't deserve to be spoken to like that.")).toEqual([])
+  })
 })
 
 describe('situation hints', () => {
