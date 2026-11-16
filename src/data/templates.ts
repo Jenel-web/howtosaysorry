@@ -21,7 +21,7 @@ export const templates: Record<Feeling, string[]> = {
     "I lost my temper when ___. I'm sorry I ___. Next time I'll step away and ___.",
     "I'm sorry for raising my voice about ___. I should have ___ instead.",
     "I let my anger decide how I acted when ___. I'm sorry for ___. Next time I'll step away and ___.",
-    "I said things in anger, including ___. I didn't mean to hurt you, and I'm sorry that I did.",
+    "I said things in anger, including ___. Those words hurt you, and I'm sorry.",
   ],
   Shame: [
     "I'm ashamed of how I ___. I'm sorry. I know I let you down.",

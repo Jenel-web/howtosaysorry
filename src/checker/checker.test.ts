@@ -192,7 +192,8 @@ describe('suppression (no flag)', () => {
     ['harmless if', "Sorry if I'm late. Let me know if you want space."],
     ['quoted', 'You said "you always overreact" and that hurt me.'],
     ['negation', "I'm not saying you're overreacting."],
-    ['self absolute', 'I never meant to hurt you. I will always be here.'],
+    ['self absolute', 'I will always be here, and I never want to lose you.'],
+    ['ownership', 'I hurt you, and that was on me. I did it, and I am sorry.'],
     ['refusal then plan', "Sorry, I can't make it tonight, but let's reschedule."],
     ['honest difficulty', 'This is hard for me to say. I am sorry I lied to you.'],
     ['warm always', "You always matter to me, and you can always call me."],
@@ -204,6 +205,70 @@ describe('suppression (no flag)', () => {
 
   it('a real excuse still flags', () => expect(ids("I'm sorry, but I was stressed.")).toContain('sorry_but'))
   it('one card per phrase', () => expect(ids("I'm sorry you are upset")).toEqual(['sorry_you_feel']))
+})
+
+describe('denying intent, awareness, or being yourself', () => {
+  const denials: [string, string][] = [
+    // not + mean/intend, any wording
+    ["It's not my intention to hurt you.", 'intent_denial'],
+    ["That wasn't my intention.", 'intent_denial'],
+    ['My intention was never to upset you, honestly.', 'intent_denial'],
+    ["I didn't mean to hurt you.", 'intent_denial'],
+    ["I didn't mean it that way.", 'intent_denial'],
+    ["Didn't mean it like that.", 'intent_denial'],
+    ['I never meant for it to go this way.', 'intent_denial'],
+    ['It was not meant to be hurtful.', 'intent_denial'],
+    ['I never intended any of this.', 'intent_denial'],
+    ['I did not do it on purpose.', 'intent_denial'],
+    ["It wasn't deliberate.", 'intent_denial'],
+    ["That's not what I wanted.", 'intent_denial'],
+    ['I never wanted this to happen.', 'intent_denial'],
+    ["I really didn't want to hurt you.", 'intent_denial'],
+    ["I wasn't trying to upset you.", 'intent_denial'],
+    ["I didn't set out to hurt anyone.", 'intent_denial'],
+    ['I would never hurt you.', 'intent_denial'],
+    // not knowing
+    ["I didn't realize it would hurt.", 'not_aware'],
+    ['I was not thinking at all.', 'not_aware'],
+    ['I had no idea it would upset you.', 'not_aware'],
+    // slips
+    ['It was an accident.', 'accident_framing'],
+    ['I said it unintentionally.', 'accident_framing'],
+    ["It just didn't come out right.", 'accident_framing'],
+    ['That was a poor choice of words.', 'accident_framing'],
+    ['It slipped out.', 'accident_framing'],
+    // not me
+    ["That wasn't me.", 'not_myself'],
+    ["I wasn't myself that day.", 'not_myself'],
+    ["That's not like me.", 'not_myself'],
+    ["That's not who I am.", 'not_myself'],
+    ["I'm just not that kind of person.", 'not_myself'],
+    ['It was out of character for me.', 'not_myself'],
+    ["I don't know what came over me.", 'not_myself'],
+    // warnings before the hurtful part
+    ['No offense, but you were late.', 'preemptive_disclaimer'],
+    ['Not to be rude, but I was right.', 'preemptive_disclaimer'],
+    ['With all due respect, I disagree.', 'preemptive_disclaimer'],
+    // red: asking them to accept it
+    ["You know I didn't mean that.", 'intent_you_know'],
+    ['You know I would never hurt you.', 'intent_you_know'],
+  ]
+  it.each(denials)('%s -> %s', (text, id) => expect(ids(text)).toContain(id))
+
+  it('denials are normal-level, except asking them to accept it', () => {
+    expect(check("I didn't mean to hurt you.")[0].strength).toBe('weak')
+    expect(check("You know I didn't mean that.")[0].strength).toBe('strong')
+  })
+
+  it('remorse and plain words stay clean', () => {
+    expect(check("I can't stop thinking about what I did to you. I'm sorry.")).toEqual([])
+    expect(check('I said things in anger. Those words hurt you, and I am sorry.')).toEqual([])
+  })
+
+  it('owning the impact stays clean', () => {
+    expect(check("I'm sorry I hurt you. I said that, and it was unkind.")).toEqual([])
+    expect(check("I'm sorry. I know that hurt you, and I should have thought first.")).toEqual([])
+  })
 })
 
 describe('key words near each other, any order', () => {

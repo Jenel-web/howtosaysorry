@@ -35,6 +35,13 @@ const REASON = 'Did they ask for the reason? It may land better after they have 
 const INTENT = 'Does this lean on your intent more than on how it landed?'
 const RESPOND_FIRST = 'Have they had a chance to respond first?'
 const CONCRETE = 'What will you do differently? A concrete step may land better.'
+const INTENT_DENIAL = 'This tells them what you meant, not how it landed. Can you also name the effect on them?'
+const NOT_AWARE = 'Does this explain what you did not know, or name what you did?'
+const SLIP = 'Does this describe what happened, or what you did? Owning it can land more strongly than calling it a slip.'
+const DISTANCE = 'Does this distance you from what you did? It may land better as "I did this, and I am sorry."'
+const WARN_FIRST = 'Does this prepare them for something that may hurt? It may be kinder to leave it out.'
+const YOU_KNOW = 'This asks them to accept what you meant. Can you leave room for how it landed?'
+const NEG = '@neg'
 
 export const conceptRules: Rule[] = [
   // ================= RED: shifting the problem onto them =================
@@ -98,7 +105,9 @@ export const conceptRules: Rule[] = [
   // "you can always call me" is warm, so "always" gets one more guard than "never"
   { id: 'always_never', strength: 'strong', seq: [YOU, 'always'], gap: 3, stop: ['will', 'would'], skipAfter: new RegExp(KIND_CONTINUATION.source + '|^\\s*(?:talk|call|come|count|reach|text)\\b', 'i'), question: NEW_ARGUMENT },
   // "to anyone who may have been hurt" (only when the writer is also saying sorry)
-  { id: 'generic_audience', strength: 'strong', near: [['anyone', 'anybody', 'whoever', 'those', 'everyone', 'everybody'], ['hurt*', 'offend*', 'upset*', 'harm*', 'wrong*', 'affect*', 'insult*', 'disrespect*']], within: 7, also: [SORRY], question: 'Who are you apologizing to? Naming them can matter.' },
+  { id: 'generic_audience', strength: 'strong', near: [['anyone', 'anybody', 'whoever'], ['hurt*', 'offend*', 'upset*', 'harm*', 'wrong*', 'affect*', 'insult*', 'disrespect*']], within: 7, also: [SORRY], question: 'Who are you apologizing to? Naming them can matter.' },
+  // "those I may have hurt", "everyone who might have been offended" ("Those words hurt you" is not this)
+  { id: 'generic_audience', strength: 'strong', near: [['those', 'everyone', 'everybody'], ['may', 'might', 'could'], ['hurt*', 'offend*', 'upset*', 'harm*', 'wrong*', 'affect*', 'insult*', 'disrespect*']], within: 7, also: [SORRY], question: 'Who are you apologizing to? Naming them can matter.' },
   // "a mistake was made", "errors happened" ("I made a mistake" is owning it, so "i/my/you" cancels it)
   { id: 'agentless', strength: 'strong', near: [['mistake*', 'error*', 'misstep*', 'lapse*'], ['made', 'happened', 'occurred', 'was', 'were', 'been']], within: 4, unless: [FIRST, YOU], question: 'Who made the mistake? Naming yourself can help this land.' },
   // how many times do I have to say sorry / how long will you stay mad / what more do you want
@@ -133,6 +142,56 @@ export const conceptRules: Rule[] = [
   // "because I was tired", "the reason I", "you have to understand"
   { id: 'unprompted_explanation', strength: 'weak', near: [['because', 'reason'], ['i', 'we', 'my']], within: 3, question: REASON },
   { id: 'unprompted_explanation', strength: 'weak', near: [YOU, ['have', 'need', 'should', 'must', 'ought'], ['understand', 'realize', 'realise', 'see', 'know', 'remember']], within: 5, question: REASON },
+
+  // ================= RED: asking them to accept your intent =================
+  // "you know I didn't mean that", "you know I would never hurt you"
+  { id: 'intent_you_know', strength: 'strong', near: [YOU, ['know', 'knew', 'understand', 'realize', 'realise', 'should', 'must', 'surely'], 'i', ['not', 'never', 'would', 'wouldn'], ['mean*', 'intend*', 'hurt*', 'want*']], within: 9, question: YOU_KNOW },
+
+  // ================= NORMAL: denying your intent =================
+  // not + mean/intend + I:  "I didn't mean to", "it wasn't my intention", "my intention wasn't to hurt you", "I never intended"
+  { id: 'intent_denial', strength: 'weak', near: [NEG, ['mean', 'meant', 'intend*', 'intention*'], ['i', 'my', 'me', 'we']], within: 5, question: INTENT_DENIAL },
+  // "it wasn't meant to hurt", "never meant it"
+  { id: 'intent_denial', strength: 'weak', near: [NEG, 'meant'], within: 3, question: INTENT_DENIAL },
+  // "didn't mean it that way", "didn't mean it like that", "didn't mean to"
+  { id: 'intent_denial', strength: 'weak', near: [NEG, 'mean', ['to', 'way', 'like', 'for']], within: 5, question: INTENT_DENIAL },
+  // "not intentional", "not on purpose", "wasn't deliberate"
+  { id: 'intent_denial', strength: 'weak', near: [NEG, '@intent'], within: 5, question: INTENT_DENIAL },
+  // "that's not what I wanted", "I never wanted this", "I didn't want to hurt you"
+  { id: 'intent_denial', strength: 'weak', near: ['not', 'what', ['want', 'wanted'], 'i'], within: 5, question: INTENT_DENIAL },
+  { id: 'intent_denial', strength: 'weak', near: [NEG, ['want', 'wanted'], ['hurt*', 'upset*', 'offend*', 'harm*', 'insult*', 'embarrass*', 'scare*']], within: 6, question: INTENT_DENIAL },
+  { id: 'intent_denial', strength: 'weak', near: [NEG, 'wanted', ['it', 'this', 'that', 'things']], within: 4, question: INTENT_DENIAL },
+  // "I wasn't trying to upset you", "I didn't set out to hurt you"
+  { id: 'intent_denial', strength: 'weak', near: [NEG, ['trying', 'tried'], ['i', 'we']], within: 5, question: INTENT_DENIAL },
+  { id: 'intent_denial', strength: 'weak', near: [NEG, 'set', 'out'], within: 3, question: INTENT_DENIAL },
+  // "I would never hurt you", "I wouldn't do that to you"
+  { id: 'intent_denial', strength: 'weak', near: ['i', ['would', 'wouldn'], ['never', 'not'], ['hurt*', 'harm*', 'do', 'say', 'want', 'intend*', 'purposely']], within: 6, question: INTENT_DENIAL },
+
+  // ================= NORMAL: denying you knew =================
+  // "I didn't realize", "I wasn't thinking", "I had no idea"
+  { id: 'not_aware', strength: 'weak', near: [['i', 'we'], NEG, ['think', 'thinking', 'thought', 'realize', 'realise', 'realized', 'realised', 'realizing', 'notice', 'noticed', 'aware', 'expect', 'expected', 'imagine', 'imagined', 'consider', 'considered', 'understand', 'understood']], within: 5, unless: ['stop', 'quit'], question: NOT_AWARE },
+  { id: 'not_aware', strength: 'weak', near: ['i', ['had', 'have'], 'no', 'idea'], within: 4, question: NOT_AWARE },
+
+  // ================= NORMAL: calling it a slip, or not you =================
+  // "it was an accident", "unintentionally", "I misspoke"
+  { id: 'accident_framing', strength: 'weak', near: [['accident*', 'unintentional*', 'inadvertent*', 'misspoke', 'misspoken']], question: SLIP },
+  // "it came out wrong", "didn't come out right", "poor choice of words"
+  { id: 'accident_framing', strength: 'weak', near: [['come', 'came', 'comes', 'coming'], 'out', ['wrong', 'badly', 'differently', 'right', 'harsher', 'sideways']], within: 4, question: SLIP },
+  { id: 'accident_framing', strength: 'weak', near: [['poor', 'wrong', 'bad', 'poorly'], ['choice', 'words', 'wording', 'phrasing', 'chosen']], within: 3, question: SLIP },
+  { id: 'accident_framing', strength: 'weak', near: ['slipped', ['out', 'up']], within: 2, question: SLIP },
+  // "that wasn't me", "I wasn't myself", "that's not like me", "that's not who I am", "out of character"
+  { id: 'not_myself', strength: 'weak', near: [['that', 'this', 'it'], NEG, 'me'], within: 4, question: DISTANCE },
+  { id: 'not_myself', strength: 'weak', near: [NEG, 'myself'], within: 3, question: DISTANCE },
+  { id: 'not_myself', strength: 'weak', near: ['not', 'like', 'me'], within: 3, question: DISTANCE },
+  { id: 'not_myself', strength: 'weak', near: ['not', 'who', 'i', 'am'], within: 5, question: DISTANCE },
+  { id: 'not_myself', strength: 'weak', near: ['not', ['kind', 'sort', 'type'], 'person'], within: 5, question: DISTANCE },
+  { id: 'not_myself', strength: 'weak', near: ['out', 'of', 'character'], within: 3, question: DISTANCE },
+  { id: 'not_myself', strength: 'weak', near: ['not', 'in', 'my', 'nature'], within: 5, question: DISTANCE },
+  // "I don't know what came over me", "I don't know what got into me"
+  { id: 'not_myself', strength: 'weak', near: ['what', ['came', 'got'], ['over', 'into'], 'me'], within: 5, question: DISTANCE },
+  // "no offense", "not to be rude", "with all due respect"
+  { id: 'preemptive_disclaimer', strength: 'weak', near: ['no', ['offense', 'offence', 'disrespect', 'harm']], within: 2, question: WARN_FIRST },
+  { id: 'preemptive_disclaimer', strength: 'weak', near: ['not', 'be', ['rude', 'mean', 'insensitive', 'harsh', 'offensive', 'disrespectful', 'negative']], within: 5, question: WARN_FIRST },
+  { id: 'preemptive_disclaimer', strength: 'weak', near: ['due', 'respect'], within: 2, question: WARN_FIRST },
 
   // ================= NORMAL: asking for something back =================
   { id: 'pressure', strength: 'weak', near: [YOU, ['have', 'need', 'should', 'must', 'ought', 'owe', 'supposed'], ['forgive', 'forgiveness']], within: 5, question: PRESSURE },

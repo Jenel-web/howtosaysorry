@@ -6,6 +6,8 @@ export const LEX: Record<string, string[]> = {
   first: ['i', 'me', 'my', 'myself', 'we', 'our', 'us'], // the writer
   turn: ['but', 'however', 'although', 'though', 'except', 'nevertheless', 'nonetheless'],
   if: ['if', 'whether', 'case'],
+  neg: ['not', 'never'], // "didn't", "wasn't", "won't" are split into do/was/will + not
+  intent: ['intend*', 'intention*', 'intentional*', 'intentionally', 'deliberate*', 'deliberately', 'purpose', 'purposely'],
   // things that could have happened to the other person
   harm: ['hurt*', 'upset*', 'offend*', 'insult*', 'bother*', 'annoy*', 'anger*', 'angry', 'disappoint*', 'wrong', 'harm*', 'disrespect*', 'uncomfortable', 'mad'],
   // how the other person is reacting (blaming it instead of owning your act)
