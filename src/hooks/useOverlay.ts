@@ -1,6 +1,6 @@
 import { useState } from 'react'
 
-export type OverlayName = 'starter' | 'checklist' | 'pause' | null
+export type OverlayName = 'starter' | 'checklist' | 'pause' | 'clear' | null
 
 // Only one overlay at a time by construction.
 export function useOverlay() {

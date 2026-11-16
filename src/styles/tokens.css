@@ -1,0 +1,60 @@
+/* Low Tide: color and type tokens for Apology Helper.
+   All text pairs pass WCAG AA (4.5:1). Ratios noted where they matter. */
+:root {
+  /* Ground and ink */
+  --mist: #f3f6f5;          /* page background */
+  --paper: #ffffff;         /* text box, cards, sheets */
+  --hairline: #dce3e1;      /* borders, dividers */
+  --hairline-strong: #c9d3d1;
+  --ink: #22302f;           /* text, 12.6:1 on mist */
+  --ink-soft: #56656a;      /* secondary text, 5.6:1 on mist */
+  --placeholder: #647378;   /* 4.5:1 on paper */
+  --control-border: #8a9699;/* unchecked boxes, 3:1 on paper */
+
+  /* Calm accent */
+  --tide: #2f6470;          /* buttons, links, focus. White on it 6.6:1 */
+  --tide-hover: #26525c;
+  --tide-tint: #e1eeef;     /* focus halo, quiet fills */
+  --disabled-fill: #dce5e5;
+
+  /* Warmth */
+  --rosewater: #f6e3dc;
+  --rose-ink: #8c5568;      /* 4.7:1 on rosewater */
+  --rose-ink-strong: #7a4457;
+
+  /* Flag: worth a look (strong) */
+  --honey: #fbeccb;
+  --honey-mark: #8a5a00;    /* solid underline, 5.9:1 on paper */
+  --honey-ink: #6e4800;     /* text on honey, 6.9:1 */
+  --honey-paper: #fffdf7;
+
+  /* Flag: small thing (weak) */
+  --peri-mist: #eeeffa;
+  --peri: #5b63ae;          /* dotted underline, 5.5:1 on paper */
+  --peri-ink: #3f4785;      /* label text, 7.5:1 */
+
+  --scrim: rgba(34, 48, 47, 0.36);
+  --shadow-pop: 0 10px 28px rgba(34, 48, 47, 0.14);
+
+  /* Type */
+  --font-ui: 'Hanken Grotesk', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-words: 'Literata', Georgia, 'Times New Roman', serif; /* only for the person's own words */
+
+  /* Shape and space */
+  --radius-sm: 10px;
+  --radius-md: 14px;
+  --radius-lg: 16px;
+  --radius-sheet: 20px;
+  --gutter: 16px;
+  --section-gap: 24px;
+  --max-width: 640px;
+  --tap: 44px;
+
+  --motion: 150ms ease-out;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --motion: 0ms linear;
+  }
+}

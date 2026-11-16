@@ -1,20 +1,33 @@
-import { forwardRef } from 'react'
 import type { Flag } from '../checker'
 
-type Props = { flag: Flag; onIgnore: () => void; onGotIt: () => void; dismissed: boolean }
+const LABELS = { strong: 'Worth a look', weak: 'Small thing' }
 
-export const FlagCard = forwardRef<HTMLLIElement, Props>(function FlagCard(
-  { flag, onIgnore, onGotIt, dismissed },
-  ref,
-) {
+export function trimPhrase(text: string, max = 40) {
+  const clean = text.replace(/\s+/g, ' ').trim()
+  return clean.length <= max ? clean : clean.slice(0, max - 1).trimEnd() + '…'
+}
+
+type Props = { flag: Flag; onIgnore: () => void; onShow: () => void }
+
+export function FlagCard({ flag, onIgnore, onShow }: Props) {
   return (
-    <li ref={ref} tabIndex={-1} className={`card ${flag.strength}${dismissed ? ' dismissed' : ''}`}>
-      <q>{flag.match}</q>
-      <p>{flag.question}</p>
-      <div className="row">
-        <button onClick={onGotIt}>Got it</button>
-        <button onClick={onIgnore}>Ignore</button>
+    <article className={`flag flag--${flag.strength}`}>
+      <div className="flag__label">
+        <span className="flag__marker" aria-hidden="true" />
+        {LABELS[flag.strength]}
       </div>
-    </li>
+      <p className="flag__phrase">
+        <span className="flag__quote">“{trimPhrase(flag.match)}”</span>
+      </p>
+      <p className="flag__question">{flag.question}</p>
+      <div className="flag__actions">
+        <button type="button" className="text-btn text-btn--small" onClick={onShow}>
+          Show in text
+        </button>
+        <button type="button" className="text-btn text-btn--small" onClick={onIgnore}>
+          Ignore
+        </button>
+      </div>
+    </article>
   )
-})
+}

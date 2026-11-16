@@ -68,6 +68,121 @@ describe('extended rules fire', () => {
   })
 })
 
+describe('synonyms and variants fire', () => {
+  const variants: [string, string][] = [
+    // sorry you feel
+    ["I apologize that you're feeling this way.", 'sorry_you_feel'],
+    ["I regret that you felt that way", 'sorry_you_feel'],
+    ['Sorry to hear you feel that way', 'sorry_you_feel'],
+    ["I'm sorry you got upset", 'other_state'],
+    ["I'm sorry you're feeling so offended", 'other_state'],
+    // conditional if
+    ['I apologize if my words offended you.', 'if_i_hurt'],
+    ['Sorry if what I said upset you.', 'if_i_hurt'],
+    ["If I did something wrong, I'm sorry.", 'if_i_hurt'],
+    ['Sorry if you were offended.', 'if_i_hurt'],
+    ['Sorry if that hurt.', 'if_i_hurt'],
+    ['Sorry if anyone was upset.', 'generic_audience'],
+    // took it that way
+    ['Sorry you misunderstood me.', 'took_it_that_way'],
+    ['I regret that my words were misinterpreted.', 'took_it_that_way'],
+    ['I am sorry you took it the wrong way.', 'took_it_that_way'],
+    // blame
+    ["It's your fault I yelled.", 'blame_shift'],
+    ['You forced me to say it.', 'blame_shift'],
+    ['You left me no choice.', 'blame_shift'],
+    ['If you hadn\'t pushed, I would not have snapped.', 'blame_shift'],
+    ['You brought this on yourself.', 'blame_shift'],
+    // minimizing
+    ["You're being so dramatic.", 'minimizing'],
+    ['It is no big deal, get over it.', 'minimizing'],
+    ["I was only kidding.", 'minimizing'],
+    ["You're blowing this out of proportion.", 'minimizing'],
+    ["Can't you take a joke?", 'minimizing'],
+    // generalizations
+    ["You're always late.", 'always_never'],
+    ['You constantly do this.', 'always_never'],
+    ['You keep ignoring me.', 'always_never'],
+    ['Every time you talk, I flinch.', 'always_never'],
+    // but synonyms
+    ["I'm sorry, however you did it too.", 'sorry_but'],
+    ['I apologize, although I was tired.', 'sorry_but'],
+    ['My apologies, but I was busy.', 'sorry_but'],
+    ['I regret it, nevertheless it had to be said.', 'sorry_but'],
+    ['I love you, however that is not an excuse.', 'loose_but'],
+    // agentless
+    ['A mistake was made.', 'agentless'],
+    ['Tempers flared.', 'agentless'],
+    ['It was a lapse in judgment.', 'agentless'],
+    ['Things got heated.', 'agentless'],
+    // not sorry
+    ["I'm not sorry.", 'sorry_not_sorry'],
+    ["I'm only sorry that you found out.", 'sorry_not_sorry'],
+    // sarcasm
+    ['Sorry for being alive.', 'sarcasm'],
+    ['Well excuse me for having feelings.', 'sarcasm'],
+    // generic audience
+    ['I apologize if anyone was offended.', 'generic_audience'],
+    ['To those offended, I am sorry.', 'generic_audience'],
+    ['Whoever was hurt, my bad.', 'generic_audience'],
+    // demand
+    ['How many times must I say sorry?', 'forgiveness_demand'],
+    ["Isn't that enough?", 'forgiveness_demand'],
+    ["I've already apologized.", 'forgiveness_demand'],
+    ['Just forgive me.', 'forgiveness_demand'],
+    ['What else do you want from me?', 'forgiveness_demand'],
+    // relitigating etc.
+    ["That isn't what happened.", 'relitigating'],
+    ["I never said that.", 'relitigating'],
+    ['For the record, I was on time.', 'relitigating'],
+    ["You're twisting my words.", 'relitigating'],
+    ['In fairness, you also yelled.', 'in_my_defense'],
+    ["I'm not making excuses, I was tired.", 'in_my_defense'],
+    ['You did the same thing last week.', 'counter_accusation'],
+    ["Sorry I'm only human.", 'backhanded'],
+    // regret / intent / hedging
+    ["I wish this hadn't happened.", 'regret_only'],
+    ['Sorry that this happened.', 'regret_only'],
+    ['I meant well.', 'intent_over_impact'],
+    ['My intentions were good.', 'intent_over_impact'],
+    ['Fine, I am sorry.', 'hedging'],
+    ['I suppose I am sorry.', 'hedging'],
+    ['Maybe I was a bit out of line.', 'hedging'],
+    ['I was kind of rude.', 'hedging'],
+    ['I had a rough day.', 'unprompted_explanation'],
+    ['You have to understand my side.', 'unprompted_explanation'],
+    ['We deeply regret this.', 'corporate_wording'],
+    // pressure, reciprocity, move on
+    ['Are we cool now?', 'pressure'],
+    ['Can we be friends again?', 'pressure'],
+    ['You should apologize too.', 'reciprocity'],
+    ['I will apologize when you do.', 'reciprocity'],
+    ['Can we just drop it?', 'move_on'],
+    ['Never mind.', 'move_on'],
+    ["It's all in the past.", 'move_on'],
+    ["Forget it.", 'move_on'],
+    // self pity, trade, gratitude
+    ["I'm a terrible person.", 'self_pity'],
+    ["I can't forgive myself.", 'self_pity'],
+    ["This is so hard for me.", 'self_pity'],
+    ['I do not deserve you.', 'self_pity'],
+    ['Can we go back to normal?', 'apology_for_a_trade'],
+    ['Please take me back.', 'apology_for_a_trade'],
+    ['Thank you for tolerating me.', 'fake_gratitude'],
+    // vague, repeats, promises
+    ['I apologize for anything I did.', 'vague_apology'],
+    ['Sorry for all the trouble.', 'vague_apology'],
+    ['Sorry sorry sorry.', 'repeated_sorry'],
+    ['Please please forgive me.', 'repeated_sorry'],
+    ["I'll be more careful.", 'no_specifics_promise'],
+    ['This will not happen again.', 'no_specifics_promise'],
+    ['I will never do that again.', 'absolute_promise'],
+    ['I swear I will never hurt you again.', 'absolute_promise'],
+    ["I'll do whatever it takes.", 'absolute_promise'],
+  ]
+  it.each(variants)('%s -> %s', (text, id) => expect(ids(text)).toContain(id))
+})
+
 describe('suppression (no flag)', () => {
   const clean: [string, string][] = [
     ['sympathy', "I'm sorry for your loss."],
@@ -78,6 +193,11 @@ describe('suppression (no flag)', () => {
     ['quoted', 'You said "you always overreact" and that hurt me.'],
     ['negation', "I'm not saying you're overreacting."],
     ['self absolute', 'I never meant to hurt you. I will always be here.'],
+    ['refusal then plan', "Sorry, I can't make it tonight, but let's reschedule."],
+    ['honest difficulty', 'This is hard for me to say. I am sorry I lied to you.'],
+    ['not your fault', "It's not your fault. It wasn't your fault at all."],
+    ['never forget', "I'll never forget it, and I won't forget about it."],
+    ['hindsight but-less', 'I hurt you and I own that.'],
   ]
   it.each(clean)('%s', (_n, text) => expect(check(text)).toEqual([]))
 
@@ -90,5 +210,7 @@ describe('situation hints', () => {
   it('self-blame', () => expect(messageHints("It's all my fault, I am so sorry for what happened yesterday.").join()).toContain('yours to own'))
   it('group', () => expect(messageHints('We are sorry for what happened at the event last week.').join()).toContain('Who is "we"'))
   it('legal', () => expect(messageHints('I am sorry, I know I could be liable for the damage to your car.').join()).toContain('legal'))
+  it('space synonyms', () => expect(messageHints('I know you blocked me and want nothing to do with me, but I am sorry about the fight.').join()).toContain('asked for space'))
+  it('apology words count as sorry', () => expect(messageHints('I take responsibility for what I did and I know that I owe you an apology for it.').join()).not.toContain("haven't said sorry"))
   it('many sorrys', () => expect(messageHints('Sorry. Sorry. Sorry, I really messed up the plans.').join()).toContain('more than once'))
 })
