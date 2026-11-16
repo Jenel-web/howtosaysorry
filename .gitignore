@@ -2,3 +2,5 @@ node_modules
 dist
 e2e/.results
 playwright-report
+showcase/shots
+showcase/.results

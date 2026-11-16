@@ -1,0 +1,154 @@
+/* Launch-style slides for "Sorry, Properly". Rendered by showcase/showcase.pw.ts at 1600x1000.
+   Uses the app's own Low Tide palette so the slides look like the product. */
+@font-face {
+  font-family: 'Dancing Script';
+  font-weight: 600;
+  src: url('../../public/fonts/dancing-script-600.woff2') format('woff2');
+}
+
+:root {
+  --mist: #f3f6f5;
+  --ink: #22302f;
+  --ink-soft: #56656a;
+  --tide: #2f6470;
+  --tide-deep: #1d3b42;
+  --tide-tint: #e1eeef;
+  --honey: #fbeccb;
+  --honey-ink: #6e4800;
+  --peri-mist: #eeeffa;
+  --peri-ink: #3f4785;
+}
+
+* { box-sizing: border-box; margin: 0; }
+html, body { width: 1600px; height: 1000px; overflow: hidden; background: var(--mist); }
+
+.slide {
+  position: relative;
+  width: 1600px;
+  height: 1000px;
+  overflow: hidden;
+  font-family: 'Hanken Grotesk', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  color: var(--ink);
+  background:
+    radial-gradient(900px 600px at 12% 8%, #e3f0ee 0%, transparent 60%),
+    radial-gradient(900px 700px at 95% 95%, #dfe6f5 0%, transparent 60%),
+    linear-gradient(135deg, #f6f9f8, #eaf1f1);
+}
+.slide--dark {
+  color: #fff;
+  background:
+    radial-gradient(900px 600px at 15% 5%, #2c5b66 0%, transparent 60%),
+    radial-gradient(800px 700px at 90% 100%, #27495a 0%, transparent 60%),
+    linear-gradient(135deg, #1d3b42, #17303a);
+}
+
+/* ---------- type ---------- */
+.wordmark {
+  position: absolute;
+  left: 90px;
+  top: 64px;
+  font-family: 'Dancing Script', cursive;
+  font-weight: 600;
+  font-size: 58px;
+  line-height: 1;
+  color: var(--tide);
+}
+.slide--dark .wordmark { color: #cfe6e8; }
+
+.headline {
+  position: absolute;
+  left: 90px;
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  line-height: 1.02;
+}
+.headline em {
+  font-family: 'Dancing Script', cursive;
+  font-weight: 600;
+  font-style: normal;
+  letter-spacing: 0;
+  color: var(--tide);
+}
+.slide--dark .headline em { color: #9fd3d8; }
+
+.sub {
+  position: absolute;
+  left: 90px;
+  font-size: 30px;
+  line-height: 1.35;
+  color: var(--ink-soft);
+}
+
+.pills { position: absolute; left: 90px; display: flex; gap: 12px; }
+.pill {
+  font-size: 24px;
+  font-weight: 600;
+  padding: 10px 20px;
+  border-radius: 999px;
+  background: #fff;
+  color: var(--tide);
+  box-shadow: 0 0 0 1px rgba(47, 100, 112, 0.18);
+}
+
+/* small labels sitting above a device */
+.tag {
+  position: absolute;
+  font-size: 22px;
+  font-weight: 700;
+  padding: 8px 18px;
+  border-radius: 999px;
+  letter-spacing: 0.01em;
+}
+.tag--before { background: var(--honey); color: var(--honey-ink); }
+.tag--after { background: var(--tide); color: #fff; }
+.tag--step { background: #fff; color: var(--tide); box-shadow: 0 0 0 1px rgba(47, 100, 112, 0.18); }
+.tag--ok { background: #fff; color: var(--tide); box-shadow: 0 8px 24px rgba(34, 48, 47, 0.18), 0 0 0 1px rgba(47, 100, 112, 0.2); }
+
+.arrow {
+  position: absolute;
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: #fff;
+  color: var(--tide);
+  display: grid;
+  place-items: center;
+  font-size: 34px;
+  font-weight: 700;
+  box-shadow: 0 10px 30px rgba(34, 48, 47, 0.2);
+}
+.slide--dark .arrow { background: rgba(255, 255, 255, 0.14); color: #fff; box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.28); }
+
+/* ---------- devices ---------- */
+.browser {
+  position: absolute;
+  background: #fff;
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0 40px 90px rgba(29, 59, 66, 0.28), 0 0 0 1px rgba(34, 48, 47, 0.1);
+}
+.browser__bar {
+  height: 40px;
+  background: #eef2f1;
+  border-bottom: 1px solid #dce3e1;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0 18px;
+}
+.browser__bar i { width: 12px; height: 12px; border-radius: 50%; background: #d3dcda; }
+.browser__bar i:nth-child(1) { background: #f0a39d; }
+.browser__bar i:nth-child(2) { background: #f1d28a; }
+.browser__bar i:nth-child(3) { background: #9fd3b0; }
+.browser__view { position: absolute; top: 40px; left: 0; right: 0; bottom: 0; overflow: hidden; background: #f3f6f5; }
+.browser__view img { display: block; width: 100%; }
+
+.phone {
+  position: absolute;
+  padding: 11px;
+  background: #0f1a1c;
+  border-radius: 50px;
+  box-shadow: 0 40px 90px rgba(10, 25, 30, 0.38), 0 0 0 2px #2a3a3d;
+}
+.phone__screen { border-radius: 40px; overflow: hidden; background: #fff; aspect-ratio: 390 / 844; }
+.phone__screen img { display: block; width: 100%; height: 100%; object-fit: cover; object-position: top; }
