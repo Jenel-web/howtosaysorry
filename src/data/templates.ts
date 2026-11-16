@@ -35,7 +35,7 @@ export const templates: Record<Feeling, string[]> = {
     "I didn't listen when you ___. I'm sorry. I want to understand how it was for you.",
     "I made it about me when ___. I'm sorry. Will you tell me what I missed?",
     "I'm sorry for ___. I don't have an excuse. I'd like to learn how to ___.",
-    "I had it wrong when I ___. Thank you for ___. I'm sorry, and I'll do better at ___.",
+    "I had it wrong when I ___. Thank you for ___. I'm sorry, and from now on I'll ___.",
   ],
   Hope: [
     "I'm sorry for ___. I care about us, and I'd like to ___ whenever you're ready.",

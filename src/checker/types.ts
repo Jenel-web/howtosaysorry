@@ -5,6 +5,9 @@ export type Rule = {
   strength: Strength
   pattern: RegExp // global, case-insensitive
   question: string
+  // Optional "don't flag this" guards, so edge cases live in the data too.
+  skipBefore?: RegExp // tested on the text before the match, same sentence only
+  skipAfter?: RegExp // tested on the text right after the match
 }
 
 export type Flag = {

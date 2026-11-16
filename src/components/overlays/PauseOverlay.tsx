@@ -12,6 +12,10 @@ export function PauseOverlay({ text, onClose }: { text: string; onClose: () => v
 
   return (
     <Overlay title="Read it out loud first." onClose={onClose}>
+      <ul className="hints">
+        <li>Has the other person had time to cool off?</li>
+        <li>Did they ask for space? Is this what they asked for?</li>
+      </ul>
       <div className="row">
         <button className="primary" onClick={copy}>{copied ? 'Copied' : 'Copy message'}</button>
         <button onClick={onClose}>Back to edit</button>
