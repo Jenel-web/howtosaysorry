@@ -39,6 +39,8 @@
   /* Type */
   --font-ui: 'Hanken Grotesk', system-ui, -apple-system, 'Segoe UI', sans-serif;
   --font-words: 'Literata', Georgia, 'Times New Roman', serif; /* only for the person's own words */
+  --font-brand: 'Dancing Script', 'Segoe Script', 'Snell Roundhand', cursive; /* the "Sorry, Properly" wordmark only */
+  --brand: var(--tide); /* 6:1 on mist; script strokes are thin, so keep it dark enough */
 
   /* Shape and space */
   --radius-sm: 10px;

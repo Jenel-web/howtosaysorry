@@ -1,4 +1,5 @@
 import { useCallback, useRef, useState } from 'react'
+import { Brand } from './components/Brand'
 import { Header } from './components/Header'
 import { Footer } from './components/Footer'
 import { ApologyEditor } from './components/ApologyEditor'
@@ -77,6 +78,7 @@ export default function App() {
 
   return (
     <div className="page">
+      <Brand />
       <main className="main">
         <Header onStart={() => overlay.show('starter')} />
 

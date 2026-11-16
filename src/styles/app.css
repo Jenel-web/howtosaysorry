@@ -68,7 +68,7 @@ button {
 .main {
   max-width: var(--max-width);
   margin: 0 auto;
-  padding: 28px var(--gutter) 24px;
+  padding: 16px var(--gutter) 24px;
   display: flex;
   flex-direction: column;
   gap: var(--section-gap);
@@ -77,10 +77,34 @@ button {
 }
 
 /* ---------- Header ---------- */
+/* Self-hosted and subset to basic Latin (15 KB): no third-party request, preloaded in index.html. */
+@font-face {
+  font-family: 'Dancing Script';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url('/fonts/dancing-script-600.woff2') format('woff2');
+}
+
 .header {
   display: flex;
   flex-direction: column;
   gap: 4px;
+}
+/* The logo: a full-width bar with the wordmark at the top-left corner of the screen.
+   Script fonts read smaller than sans-serif, so it is set larger. */
+.topbar {
+  padding: 16px var(--gutter) 0;
+}
+.brand {
+  margin: 0;
+  font-family: var(--font-brand);
+  font-weight: 600;
+  font-size: 36px;
+  line-height: 1.1;
+  letter-spacing: 0;
+  color: var(--brand);
+  white-space: nowrap;
 }
 .header__titles {
   display: flex;
@@ -794,7 +818,7 @@ button {
 /* ---------- Desktop ---------- */
 @media (min-width: 640px) {
   .main {
-    padding: 64px 24px 40px;
+    padding: 32px 24px 40px;
     gap: 28px;
   }
   .header {
@@ -803,6 +827,12 @@ button {
     justify-content: space-between;
     align-items: flex-end;
     gap: 12px 24px;
+  }
+  .topbar {
+    padding: 24px 32px 0;
+  }
+  .brand {
+    font-size: 46px;
   }
   .header__title {
     font-size: 28px;
